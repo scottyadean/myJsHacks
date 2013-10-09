@@ -1,0 +1,74 @@
+<!doctype html>
+<html>
+<head>
+<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+</head>
+<body>
+
+<h3> Multiple js file upload using HTML5, Jquery and PHP </h3>
+<p> Be sure to chmod the uploads dir. 777 or 775 <br />
+    Uses FormData() older browsers will not work. 
+</p>
+
+<div id="js-upload-success"> </div>
+<form enctype="multipart/form-data" action="upload.php" method="post" id="js-upload-data">
+   <input name="file[]" id="file" type="file" value="" multiple/>
+   <input class="js-submit-btn" type="button" alt="Upload" value="Upload" />
+</form>
+
+
+<script>
+    $(function() {
+        $("#js-upload-data .js-submit-btn").on("click", function(){
+            Submit.upload();            
+            return false;
+        });
+    });
+
+var Submit = {
+     //send upload
+     upload:function(){
+
+       var form = $("#js-upload-data");   
+       var action = form.attr('action');
+       var method = form.attr('method'); 
+       var files = $('#file')[0].files;
+       var data = new FormData();
+       
+       $.each(files, function(i, file) {
+            data.append(i,file);
+        });
+    
+        
+        $("#js-upload-success").html("Sending...");    
+           
+        $.ajax({
+            type: method,
+            data: data,
+            url: action,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: Submit.onUpload
+        });
+     },
+     
+     //response catch
+     onUpload:function(data) {
+     
+        var info = [];
+     
+        for(var key in data){
+            var d = data[key];
+            info.push(d.file + " " + d.status);
+        
+        }
+        
+        $("#js-upload-success").html(info.join("<br>"));    
+             
+     },
+};
+
+</script>
+</body>
+</html>
